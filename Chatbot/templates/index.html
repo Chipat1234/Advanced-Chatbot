@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <h2>College Chatbot</h2>
+        <div id="chatbox"></div>
+        <input type="text" id="userInput" placeholder="Ask a question...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            let userText = document.getElementById("userInput").value;
+            let chatbox = document.getElementById("chatbox");
+    
+            chatbox.innerHTML += `<p><strong>You:</strong> ${userText}</p>`;
+    
+            let response = await fetch("/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: userText })
+            });
+    
+            let data = await response.json();
+            
+            // ✅ Format AI response properly (Markdown support)
+            let formattedResponse = data.response.replace(/\n/g, "<br>");
+            chatbox.innerHTML += `<p><strong>Bot:</strong> ${formattedResponse}</p>`;
+    
+            // Scroll to the bottom for new messages
+            chatbox.scrollTop = chatbox.scrollHeight;
+    
+            // Clear input field
+            document.getElementById("userInput").value = "";
+        }
+    </script>
+    
+
+       
+</body>
+</html>
